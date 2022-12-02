@@ -1,21 +1,12 @@
+import Data.List
 main :: IO ()
-
-
 main = do
     inputs <- readFile "input.txt"
     -- print inputs
     let list = convertElf 0 "" inputs
-    let highest =  maximum list
-    let list2 = removeItem highest list
-    let highest2 = maximum list2
-    let list3 = removeItem highest2 list2
-    let highest3 = maximum list3
-    print (highest + highest2 + highest3)
+    let sorted = (reverse . sort) list
+    print (sorted!!0 + sorted!!1 + sorted!!2)
 
-removeItem :: Int -> [Int] -> [Int]
-removeItem _ []                 = []
-removeItem x (y:ys) | x == y    = removeItem x ys
-                    | otherwise = y : removeItem x ys
 
 convertElf :: Int -> String -> String -> [Int]
 convertElf n val ['\n'] = [n + (read val :: Int)]
