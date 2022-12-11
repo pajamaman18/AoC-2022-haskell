@@ -38,7 +38,7 @@ tailDist (headx,heady) (tailx,taily)
 
 pullTail :: (Int,Int) -> (Int,Int) -> (Int,Int)
 pullTail (headx,heady) (tailx,taily) 
-    | d < 9 = (tailx,taily) 
+    | d < 2 = (tailx,taily) 
     | otherwise = moveTail (headx,heady) (tailx,taily) 
         where
             d = tailDist (headx,heady) (tailx,taily) 
@@ -62,52 +62,6 @@ moveH ((dir,dist):rest) ((hx,hy),tail,others)
     | dir == 'R' = moveH ((dir,dist-1):rest) ((hx+1,hy),pullTail (hx+1,hy) tail,(pullTail (hx+1,hy) tail):others)
     | dir == 'U' = moveH ((dir,dist-1):rest) ((hx,hy-1),pullTail (hx,hy-1) tail,(pullTail (hx,hy-1) tail):others)
     | dir == 'D' = moveH ((dir,dist-1):rest) ((hx,hy+1),pullTail (hx,hy+1) tail,(pullTail (hx,hy+1) tail):others)
-
-{-
-moveH :: [(Char,Int)] ->  ((Int,Int),(Int,Int),[[Int]]) -> ((Int,Int),(Int,Int),[[Int]])
-moveH [] ((hx,hy),tail,list) = ((hx,hy),tail,list)
-moveH ((dir,dist):rest) ((hx,hy),tail,others)
-    | dist == 0 = moveH rest ((hx,hy),tail,others)
-    | dir == 'L' = moveH ((dir,dist-1):rest) ((hx-1,hy),pullTail (hx-1,hy) tail,tailAppear (pullTail (hx-1,hy) tail) others)
-    | dir == 'R' = moveH ((dir,dist-1):rest) ((hx+1,hy),pullTail (hx+1,hy) tail,tailAppear (pullTail (hx-1,hy) tail) others)
-    | dir == 'U' = moveH ((dir,dist-1):rest) ((hx,hy-1),pullTail (hx,hy-1) tail,tailAppear (pullTail (hx-1,hy) tail) others)
-    | dir == 'D' = moveH ((dir,dist-1):rest) ((hx,hy+1),pullTail (hx,hy+1) tail,tailAppear (pullTail (hx-1,hy) tail) others)
--}
-
-
-tailAppear :: (Int,Int) -> [[Int]] -> [[Int]]
-tailAppear (x,y) board =
-    (take y board) ++ [(take x $ board!!x) ++ [1] ++ (drop (x+1) $ board!!x)] ++ drop (y+1) board
-
-
-moveHead :: [(Char,Int)] -> (Int,Int) -> [[Int]] -> [[Int]]
-moveHead [] _ board = board
-moveHead ((dir,dist):rest) (i,j) board
-    | dist == 0 = moveHead rest (i,j) board
-    | dir == 'L' = moveHead ((dir,dist-1):rest) (i-1,j) (moveplace (i,j) (i-1,j) board)
-    | dir == 'R' = moveHead ((dir,dist-1):rest) (i+1,j) (moveplace (i,j) (i+1,j) board)
-    | dir == 'U' = moveHead ((dir,dist-1):rest) (i,j-1) (moveplace (i,j) (i,j-1) board)
-    | dir == 'D' = moveHead ((dir,dist-1):rest) (i,j+1) (moveplace (i,j) (i,j+1) board)
-
-
-moveplace :: (Int,Int) -> (Int,Int) -> [[Int]] -> [[Int]]
-moveplace (ox,oy) (nx,ny) board
-    | oy == ny = (take ny board) ++ [changeValx ox nx (board!!ny)] ++ (drop (ny+1) board)
-    | oy < ny = (take oy board) ++ [olist] ++ (((take (ny-oy-1)) . (drop (oy+1))) board) ++ [nlist] ++ (drop (ny+1) board)
-    | otherwise = (take ny board) ++ [olist] ++ (((take (oy-ny-1)) . (drop (ny+1))) board) ++ [nlist] ++ (drop (oy+1) board)
-        where 
-            (olist,nlist) = (changeValy nx ((board!!oy),(board!!ny)))
-
-changeValx :: Int -> Int -> [Int] -> [Int]
-changeValx ox nx list
-    | ox < nx = (take ox list) ++ [list!!ox] ++ (((take (nx-ox-1)) . (drop (ox+1))) list) ++ [list!!ox] ++ (drop (nx+1) list)
-    | otherwise = (take nx list) ++ [list!!ox] ++ (((take (ox-nx-1)) . (drop (nx+1))) list) ++ [list!!ox] ++ (drop (ox+1) list)
-
-changeValy :: Int -> ([Int],[Int]) -> ([Int],[Int])
-changeValy x (olist,nlist) = (uolist,unlist)
-    where
-        uolist = (take x olist) ++ [olist!!x] ++ (drop (x+1) olist)
-        unlist = (take x nlist) ++ [olist!!x] ++ (drop (x+1) nlist)
 
 formatMoves :: String -> (Char, Int)
 formatMoves str = (str!!0, (read . (drop 2)) str)
