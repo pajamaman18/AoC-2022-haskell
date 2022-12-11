@@ -4,24 +4,24 @@ import Data.Char
 main :: IO ()
 main =
     do
-        input <- readFile "input.txt"
+        input <- readFile "t.txt"
         let l = parse "" input
         let monkeys = map (\l -> filter (\s -> (not . null) s) l) (take 7 l : chunksOf 7 (drop 7 l))
-        -- print monkeys
-        -- print $ map (\ind -> monkeys!!0!!ind) [0..5] 
         let tthrows = do20 20 $ map simpMonkey monkeys
         let throws = filter (\c -> (not . null) c) tthrows
-        -- print $ length $ throws!!0
-        -- print tthrows
+        -- print throws
         let asda = [(length t, snd (t!!0)) | t <- throws]
         let splitInd = map (\n -> filter (\(am,nr) -> n == nr) asda) [0..3]
         let p1 = map (\t -> (sum . map (\(a,_)-> a)) t) splitInd
         -- let part1 = [out | t <- splitInd, out <- (map sum . map (\(a,b) -> a)) t]
         -- let am = (map length . map (\nr -> filter (\(_,n) -> nr == n) throws)) [0..3]
-        -- print asda
+        let fthis = chunksOf 4 $ (map id . map length) throws
+        -- print fthis
         let m1 = maximum p1
         let m2 = maximum $ removeItem m1 p1
         print $ m1 * m2
+        -- print $ chunksOf 4 $ map (\(a,_)->a) asda
+        print splitInd
         -- print $ throws!!0
 
 
@@ -54,21 +54,17 @@ afterInspect thrown =
 
             --  oper,   div,   true,   fal,   wrry, (wrry,mnkynr)
 inspectElem :: String -> Int -> Int -> Int -> Int -> (Int,Int)
+inspectElem "* old" divisor true fal worry
+    | (v `mod` divisor) == 0 = (v,true)
+    | otherwise = (v,fal)
+        where 
+            v = (worry * worry) `div` 3
+          
 inspectElem operation divisor true fal worry
     | take 1 operation == "+" = 
         if plusval `mod` divisor == 0
             then (plusval,true)
             else (plusval,fal)
-    | drop 2 operation == "old" = 
-        if take 1 operation == "*"
-            then 
-                if (((worry * worry) `div` 3) `mod` divisor) == 0
-                    then (((worry * worry) `div` 3),true)
-                    else (((worry * worry) `div` 3),fal)
-            else
-                if (((worry + worry) `div` 3) `mod` divisor) == 0
-                    then (((worry + worry) `div` 3),true)
-                    else (((worry + worry) `div` 3),fal)
     | otherwise =
         if mulval `mod` divisor == 0
             then (mulval,true)
