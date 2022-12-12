@@ -9,8 +9,8 @@ main =
         let monkeMoves = map simpMonkey  (chunksOf 7 $ parse "" i)
         let totInspects = do20 20 monkeMoves
         let zeros = take 4 $ [0..]
-        -- let insp = foldr (\n acc -> zipWith (+) n acc) zeros totInspects
-        let insp = map (\n ->foldr (\a c -> c + (a!!n)) 0 totInspects) [0..3]
+        let insp = foldr (\n acc -> zipWith (+) n acc) zeros totInspects
+        -- let insp = map (\n ->foldr (\a c -> c + (a!!n)) 0 totInspects) [0..3]
         let m1 = maximum insp
         let m2 = maximum $ removeItem m1 insp
         print $ m1 * m2
