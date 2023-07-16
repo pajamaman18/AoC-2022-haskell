@@ -1,2 +1,4 @@
 *.txt
 .idea/
+*.py
+d11/mic.hs
